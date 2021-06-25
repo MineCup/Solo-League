@@ -5,7 +5,7 @@ from datetime import datetime
 from random import randint
 
 
-def fight_random(slp, members, message):
+async def fight_random(slp, members, message):
     premium = []
     for i in range(len(members)):
         if slp in members[i].roles:
