@@ -113,6 +113,5 @@ class MyClient(Client):
                 user_api = mes.content
                 await user_token(mes, user_api)
 
-print(token["bot"])
 client = MyClient()
 client.run(token["bot"])
