@@ -113,6 +113,34 @@ class MyClient(Client):
                 user_api = mes.content
                 await user_token(mes, user_api)
 
+        if message.content.startswith("*add") and message.channel == channel["nicks"]:
+            new_nick = message.content[5:]
+            for i in range(5):
+                try:
+                    mes = await channel["nicks"].fetch_message(messages["nicknames"])
+                    await mes.edit(content=f"```{mes.content.replace('```', '')}{new_nick}\n```")
+                    break
+                except:
+                    if i == 4:
+                        await channel["nicks"].send("Не удалось изменить сообщение.")
+
+        if message.content.startswith("*rem") and message.channel == channel["nicks"]:
+            new_nick = message.content[5:]
+            for i in range(5):
+                try:
+                    mes = await channel["nicks"].fetch_message(messages["nicknames"])
+                    mes2 = mes.content.split("\n")
+                    mes_new = ""
+                    for m in mes2:
+                        print(m)
+                        if m.replace("\n", "").lower() != new_nick.lower() and m != "":
+                            mes_new += m + "\n"
+                    await mes.edit(content=mes_new)
+                    break
+                except:
+                    if i == 4:
+                        await channel["nicks"].send("Не удалось изменить сообщение.")
+
 
 client = MyClient()
 client.run(token["bot"])
