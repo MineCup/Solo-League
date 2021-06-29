@@ -57,16 +57,16 @@ async def user_token(mes, user_api):
                         nicknames_1 = await channel["nicks"].fetch_message(messages["nicknames"])
                         if pip["owner"]["username"].lower() in nicknames_1.content.lower():
                             await mes.author.add_roles(roles["login"], reason="Проверенный")
-                        d = datetime.utcnow().strftime("%d/%m/%y")
-                        emb = Embed(title="**Принят токен!**", colour=0x19253A)
-                        emb.set_footer(text=f"{d}")
-                        emb.set_thumbnail(
-                            url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
-                        dsc = f'**Пользователь:** {mes.author.mention}\n**Ник:** `{pip["owner"]["username"]}`\n' \
-                              f'**Уровень:** `{pip["owner"]["level"]} [{int(pip["owner"]["levelPercentage"] * 100)}%]`\n' \
-                              f'**Статус:** `{pip["owner"]["rank"]}`\n'
-                        emb.description = dsc
-                        await mes.channel.send(embed=emb)
+                            d = datetime.utcnow().strftime("%d/%m/%y")
+                            emb = Embed(title="**Принят токен!**", colour=0x19253A)
+                            emb.set_footer(text=f"{d}")
+                            emb.set_thumbnail(
+                                url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
+                            dsc = f'**Пользователь:** {mes.author.mention}\n**Ник:** `{pip["owner"]["username"]}`\n' \
+                                  f'**Уровень:** `{pip["owner"]["level"]} [{int(pip["owner"]["levelPercentage"] * 100)}%]`\n' \
+                                  f'**Статус:** `{pip["owner"]["rank"]}`\n'
+                            emb.description = dsc
+                            await mes.channel.send(embed=emb)
 
 
 class MyClient(Client):
