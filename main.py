@@ -92,7 +92,7 @@ class MyClient(Client):
 
         if message.channel == channel["sl"] and message.content == "/fight":
             all_roles = set(list(slwl) + message.author.roles)
-            if len(message.author.roles) + 3 == len(all_roles):
+            if len(message.author.roles) + 3 != len(all_roles):
                 members = message.author.voice.channel.members
                 if len(members) == 9:
                     for i in range(len(members)):
