@@ -9,8 +9,6 @@ second_game = []
 
 
 async def fight_random(slp, members, message):
-    print(first_game)
-    print(second_game)
     if members in second_game:
         await message.channel.send("Игра не создана. Поменяйте состав.")
     else:
@@ -29,6 +27,8 @@ async def fight_random(slp, members, message):
                         member_remember.append(members[member])
                 if counter > 5:
                     block = True
+                    print(second_game[game2])
+                    print(members)
                     await message.channel.send("Игра не создана. Поменяйте состав.")
                 else:
                     for rem in member_remember:
