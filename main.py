@@ -9,6 +9,8 @@ second_game = []
 
 
 async def fight_random(slp, members, message):
+    print(first_game)
+    print(second_game)
     members_id = []
     for mem in members:
         members_id.append(mem.id)
@@ -52,10 +54,7 @@ async def fight_random(slp, members, message):
                         block2 = True
                         print(first_game[game1])
                         print(members_id)
-                        try:
-                            first_game.remove(members_id)
-                        except:
-                            print("error", first_game)
+                        first_game.remove(members_id)
                         second_game.append(members_id)
                     else:
                         for rem in member_remember:
