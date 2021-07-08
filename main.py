@@ -9,26 +9,29 @@ second_game = []
 
 
 async def fight_random(slp, members, message):
-    if members in second_game:
+    members_id = []
+    for mem in members:
+        members_id.append(mem.id)
+    if members_id in second_game:
         await message.channel.send("Игра не создана. Поменяйте состав.")
     else:
-        if members in first_game:
-            first_game.remove(members)
-            second_game.append(members)
+        if members_id in first_game:
+            first_game.remove(members_id)
+            second_game.append(members_id)
         else:
             block = False
             block2 = False
             for game2 in range(len(second_game)):
                 counter = 0
                 member_remember = []
-                for member in range(len(members)):
-                    if members[member] in second_game[game2]:
+                for member in range(len(members_id)):
+                    if members_id[member] in second_game[game2]:
                         counter += 1
-                        member_remember.append(members[member])
+                        member_remember.append(members_id[member])
                 if counter > 5:
                     block = True
                     print(second_game[game2])
-                    print(members)
+                    print(members_id)
                     await message.channel.send("Игра не создана. Поменяйте состав.")
                 else:
                     for rem in member_remember:
@@ -39,21 +42,21 @@ async def fight_random(slp, members, message):
                 for game1 in range(len(first_game)):
                     counter = 0
                     member_remember = []
-                    for member in range(len(members)):
-                        if members[member] in first_game[game1]:
+                    for member in range(len(members_id)):
+                        if members_id[member] in first_game[game1]:
                             counter += 1
-                            member_remember.append(members[member])
+                            member_remember.append(members_id[member])
                     if counter > 5:
                         block2 = True
-                        first_game.remove(members)
-                        second_game.append(members)
+                        first_game.remove(members_id)
+                        second_game.append(members_id)
                     else:
                         for rem in member_remember:
                             first_game[game1].remove(rem)
                     if len(first_game[game1]) == 4:
                         first_game.pop(game1)
                 if not block2:
-                    first_game.append(members)
+                    first_game.append(members_id)
                 premium = []
                 for i in range(len(members)):
                     if slp in members[i].roles:
