@@ -9,8 +9,9 @@ second_game = []
 
 
 async def fight_random(slp, members, message):
-    print(first_game)
-    print(second_game)
+    print("members:", members)
+    print("1:", first_game)
+    print("2", second_game)
     members_id = []
     for mem in members:
         members_id.append(mem.id)
