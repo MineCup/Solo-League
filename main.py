@@ -25,9 +25,10 @@ async def fight_random(slp, members, message):
                 counter = 0
                 member_remember = []
                 for member in range(len(members_id)):
-                    if members_id[member] in second_game[game2]:
-                        counter += 1
-                        member_remember.append(members_id[member])
+                    if second_game[game2]:
+                        if members_id[member] in second_game[game2]:
+                            counter += 1
+                            member_remember.append(members_id[member])
                 if counter > 5:
                     block = True
                     print(second_game[game2])
@@ -43,9 +44,10 @@ async def fight_random(slp, members, message):
                     counter = 0
                     member_remember = []
                     for member in range(len(members_id)):
-                        if members_id[member] in first_game[game1]:
-                            counter += 1
-                            member_remember.append(members_id[member])
+                        if first_game[game1]:
+                            if members_id[member] in first_game[game1]:
+                                counter += 1
+                                member_remember.append(members_id[member])
                     if counter > 5:
                         block2 = True
                         print(first_game[game1])
