@@ -8,36 +8,89 @@ first_game = []
 second_game = []
 
 
-async def fight_random(slp, members, message):
-    premium = []
-    for i in range(len(members)):
-        if slp in members[i].roles:
-            premium.append(i)
-    if premium:
-        if len(premium) == 1:
-            cap1 = members[premium[0]]
-            cap2 = members[randint(0, len(members) - 1)]
-            while cap2 == cap1:
-                cap2 = members[premium[randint(0, len(premium) - 1)]]
-        else:
-            cap1 = members[premium[randint(0, len(premium) - 1)]]
-            cap2 = members[premium[randint(0, len(premium) - 1)]]
-            while cap2 == cap1:
-                cap2 = members[premium[randint(0, len(premium) - 1)]]
+def fight_random(slp, members, message):
+    members_id = []
+    for mem in members:
+        members_id.append(mem.id)
+    if members_id in second_game:
+        await message.channel.send("Игра не создана. Поменяйте состав.")
     else:
-        cap1 = members[randint(0, len(members) - 1)]
-        cap2 = members[randint(0, len(members) - 1)]
-        while cap2 == cap1:
-            cap2 = members[randint(0, len(members) - 1)]
-    maps = await channel["map_pool"].fetch_message(messages["map_pool"])
-    maps = maps.content.split("\n")
-    emb = Embed(title="══₪ SOLO LEAGUE ₪══",
-                description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
-                🟥 Капитан: <@{cap1.id}>
-                🟦 Капитан: <@{cap2.id}>
-                👑 Ведущий: <@{message.author.id}>**""",
-                color=3553599)
-    await message.channel.send(embed=emb)
+        if members_id in first_game:
+            first_game.remove(members_id)
+            second_game.append(members_id)
+        else:
+            block = False
+            block2 = False
+            for game2 in range(len(second_game)):
+                counter = 0
+                member_remember = []
+                for member in range(len(members_id)):
+                    if members_id[member] in second_game[game2]:
+                        counter += 1
+                        member_remember.append(members_id[member])
+                if counter > 5:
+                    block = True
+                    await message.channel.send("Игра не создана. Поменяйте состав.")
+                else:
+                    for rem in member_remember:
+                        second_game[game2].remove(rem)
+            for game11 in range(len(first_game)):
+                for game2 in range(len(second_game)):
+                    if len(second_game[game2]) <= 4:
+                        second_game.pop(game2)
+                        break
+            if not block:
+                for game1 in range(len(first_game)):
+                    counter = 0
+                    member_remember = []
+                    for member in range(len(members_id)):
+                        if members_id[member] in first_game[game1]:
+                            counter += 1
+                            member_remember.append(members_id[member])
+                    if counter > 5:
+                        block2 = True
+                        for ii in member_remember:
+                            first_game[game1].remove(ii)
+                        second_game.append(members_id)
+                    else:
+                        for rem in member_remember:
+                            first_game[game1].remove(rem)
+                for game11 in range(len(first_game)):
+                    for game1 in range(len(first_game)):
+                        if len(first_game[game1]) <= 4:
+                            first_game.pop(game1)
+                            break
+                if not block2:
+                    first_game.append(members_id)
+                premium = []
+                for i in range(len(members)):
+                    if slp in members[i].roles:
+                        premium.append(i)
+                if premium:
+                    if len(premium) == 1:
+                        cap1 = members[premium[0]]
+                        cap2 = members[randint(0, len(members) - 1)]
+                        while cap2 == cap1:
+                            cap2 = members[premium[randint(0, len(premium) - 1)]]
+                    else:
+                        cap1 = members[premium[randint(0, len(premium) - 1)]]
+                        cap2 = members[premium[randint(0, len(premium) - 1)]]
+                        while cap2 == cap1:
+                            cap2 = members[premium[randint(0, len(premium) - 1)]]
+                else:
+                    cap1 = members[randint(0, len(members) - 1)]
+                    cap2 = members[randint(0, len(members) - 1)]
+                    while cap2 == cap1:
+                        cap2 = members[randint(0, len(members) - 1)]
+                maps = await channel["map_pool"].fetch_message(messages["map_pool"])
+                maps = maps.content.split("\n")
+                emb = Embed(title="══₪ SOLO LEAGUE ₪══",
+                            description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
+                                            🟥 Капитан: <@{cap1.id}>
+                                            🟦 Капитан: <@{cap2.id}>
+                                            👑 Ведущий: <@{message.author.id}>**""",
+                            color=3553599)
+                await message.channel.send(embed=emb)
 
 
 async def user_token(mes, user_api):
