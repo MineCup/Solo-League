@@ -60,7 +60,7 @@ async def fight_random(slp, members, message):
                     if members_id[member] in second_game[game2]:
                         counter += 1
                         member_remember.append(members_id[member])
-                if counter > 6:
+                if counter > 5:
                     block = True
                     await message.channel.send("Игра не создана. Поменяйте состав.")
                 else:
@@ -68,7 +68,7 @@ async def fight_random(slp, members, message):
                         second_game[game2].remove(rem)
             for game11 in range(len(first_game)):
                 for game2 in range(len(second_game)):
-                    if len(second_game[game2]) <= 5:
+                    if len(second_game[game2]) <= 4:
                         second_game.pop(game2)
                         break
             if not block:
@@ -79,7 +79,7 @@ async def fight_random(slp, members, message):
                         if members_id[member] in first_game[game1]:
                             counter += 1
                             member_remember.append(members_id[member])
-                    if counter > 6:
+                    if counter > 5:
                         block2 = True
                         for ii in member_remember:
                             first_game[game1].remove(ii)
@@ -89,7 +89,7 @@ async def fight_random(slp, members, message):
                             first_game[game1].remove(rem)
                 for game11 in range(len(first_game)):
                     for game1 in range(len(first_game)):
-                        if len(first_game[game1]) <= 5:
+                        if len(first_game[game1]) <= 4:
                             first_game.pop(game1)
                             break
                 if not block2:
