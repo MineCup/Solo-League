@@ -2,8 +2,6 @@ discord.py
 aiohttp
 oauth2client
 apiclient
-gflags
 httplib2
 oauth2client
-uritemplate
 google-api-python-client
