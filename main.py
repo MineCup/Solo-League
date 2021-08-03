@@ -3,9 +3,12 @@ from config import *
 from aiohttp import ClientSession
 from datetime import datetime
 from random import randint
+from table import table
 
 first_game = []
 second_game = []
+
+services = table()
 
 
 async def fight_random(slp, members, message):
@@ -142,19 +145,24 @@ async def user_token(mes, user_api):
                         else:
                             pass
                     if not block:
-                        nicknames_1 = await channel["nicks"].fetch_message(messages["nicknames"])
-                        if pip["owner"]["username"].lower() in nicknames_1.content.lower():
-                            await mes.author.add_roles(roles["login"], reason="Проверенный")
-                            d = datetime.utcnow().strftime("%d/%m/%y")
-                            emb = Embed(title="**Принят токен!**", colour=0x19253A)
-                            emb.set_footer(text=f"{d}")
-                            emb.set_thumbnail(
-                                url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
-                            dsc = f'**Пользователь:** {mes.author.mention}\n**Ник:** `{pip["owner"]["username"]}`\n' \
-                                  f'**Уровень:** `{pip["owner"]["level"]} [{int(pip["owner"]["levelPercentage"] * 100)}%]`\n' \
-                                  f'**Статус:** `{pip["owner"]["rank"]}`\n'
-                            emb.description = dsc
-                            await mes.channel.send(embed=emb)
+                        nicknames_1 = services["bot"].spreadsheets().values().get(
+                            spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
+                            range=f'SOLO LEAGUE NICKNAMES!A2:A1000',
+                            majorDimension='COLUMNS').execute()["values"][0]
+                        if pip["owner"]["username"].lower() in str(nicknames_1).lower():
+                            for namee in nicknames_1:
+                                if pip["owner"]["username"].lower() == namee:
+                                    await mes.author.add_roles(roles["login"], reason="Проверенный")
+                                    d = datetime.utcnow().strftime("%d/%m/%y")
+                                    emb = Embed(title="**Принят токен!**", colour=0x19253A)
+                                    emb.set_footer(text=f"{d}")
+                                    emb.set_thumbnail(
+                                        url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
+                                    dsc = f'**Пользователь:** {mes.author.mention}\n**Ник:** `{pip["owner"]["username"]}`\n' \
+                                          f'**Уровень:** `{pip["owner"]["level"]} [{int(pip["owner"]["levelPercentage"] * 100)}%]`\n' \
+                                          f'**Статус:** `{pip["owner"]["rank"]}`\n'
+                                    emb.description = dsc
+                                    await mes.channel.send(embed=emb)
 
 
 class MyClient(Client):
@@ -200,34 +208,6 @@ class MyClient(Client):
             else:
                 user_api = mes.content
                 await user_token(mes, user_api)
-
-        if message.content.startswith("*add") and message.channel == channel["nicks"]:
-            new_nick = message.content[5:]
-            for i in range(5):
-                try:
-                    mes = await channel["nicks"].fetch_message(messages["nicknames"])
-                    await mes.edit(content=f"```{mes.content.replace('```', '')}{new_nick}\n```")
-                    break
-                except:
-                    if i == 4:
-                        await channel["nicks"].send("Не удалось изменить сообщение.")
-
-        if message.content.startswith("*rem") and message.channel == channel["nicks"]:
-            new_nick = message.content[5:]
-            for i in range(5):
-                try:
-                    mes = await channel["nicks"].fetch_message(messages["nicknames"])
-                    mes2 = mes.content.split("\n")
-                    mes_new = ""
-                    for m in mes2:
-                        print(m)
-                        if m.replace("\n", "").lower() != new_nick.lower() and m != "":
-                            mes_new += m + "\n"
-                    await mes.edit(content=mes_new)
-                    break
-                except:
-                    if i == 4:
-                        await channel["nicks"].send("Не удалось изменить сообщение.")
 
 
 client = MyClient()
