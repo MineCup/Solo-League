@@ -4,3 +4,4 @@ oauth2client
 google-api-python-client
 apiclient
 httplib2
+google-api-python-client
