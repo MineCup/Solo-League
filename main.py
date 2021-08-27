@@ -186,7 +186,7 @@ class MyClient(Client):
         if message.author == self.user:
             return
 
-        if message.channel == channel["sl"] and message.content == "/fight" and 1 == 2:
+        if message.channel == channel["sl"] and message.content == "/fight":
             all_roles = set(list(slwl) + message.author.roles)
             if len(message.author.roles) + 3 != len(all_roles):
                 members = message.author.voice.channel.members
