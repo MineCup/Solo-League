@@ -149,7 +149,7 @@ async def userToken(message, api):
 
             async for history in channel["login"].history(limit=500):
                 if pip["owner"]["username"] in history.embeds[0].description:
-                    continue
+                    return
 
                 for name in nicknames["values"][0]:
                     if pip["owner"]["username"].lower() == name.lower():
