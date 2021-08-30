@@ -128,41 +128,48 @@ async def fight_random(slp, members, message):
                 await message.channel.send(embed=emb)
 
 
-async def user_token(mes, user_api):
+async def userToken(message, api):
     async with ClientSession() as session:
-        async with session.get(f"https://api.vimeworld.ru/misc/token/{user_api}") as response:
+        async with session.get(f"https://api.vimeworld.ru/misc/token/{api}") as response:
             pip = await response.json()
+
             if "Method not found" in pip:
-                pass
-            else:
-                if not pip["valid"]:
-                    pass
-                else:
-                    block = False
-                    async for history in channel["login"].history(limit=500):
-                        if pip["owner"]["username"] in history.embeds[0].description:
-                            block = True
-                        else:
-                            pass
-                    if not block:
-                        nicknames_1 = services["bot"].spreadsheets().values().get(
-                            spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
-                            range=f'SOLO LEAGUE NICKNAMES!A2:A1000',
-                            majorDimension='COLUMNS').execute()["values"][0]
-                        if pip["owner"]["username"].lower() in str(nicknames_1).lower():
-                            for namee in nicknames_1:
-                                if pip["owner"]["username"].lower() == namee:
-                                    await mes.author.add_roles(roles["login"], reason="Проверенный")
-                                    d = datetime.utcnow().strftime("%d/%m/%y")
-                                    emb = Embed(title="**Принят токен!**", colour=0x19253A)
-                                    emb.set_footer(text=f"{d}")
-                                    emb.set_thumbnail(
-                                        url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
-                                    dsc = f'**Пользователь:** {mes.author.mention}\n**Ник:** `{pip["owner"]["username"]}`\n' \
+                return
+
+            if not pip["valid"]:
+                return
+
+            async for history in channel["login"].history(limit=500):
+                if pip["owner"]["username"] in history.embeds[0].description:
+                    continue
+                nicknames = services["bot"].spreadsheets().values().get(
+                    spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
+                    range=f'SOLO LEAGUE NICKNAMES!A2:A1000',
+                    majorDimension='COLUMNS').execute()
+
+                if "values" not in nicknames:
+                    return
+
+                if pip["owner"]["username"].lower() not in str(nicknames["values"][0]).lower():
+                    return
+
+                for name in nicknames["values"][0]:
+                    del nicknames
+                    if pip["owner"]["username"].lower() == name.lower():
+                        await message.author.add_roles(roles["login"], reason="Проверенный")
+
+                        d = datetime.utcnow().strftime("%d/%m/%y")
+                        emb = Embed(title="**Принят токен!**", colour=0x19253A)
+                        emb.set_footer(text=d)
+                        emb.set_thumbnail(url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
+
+                        emb.description = f'**Пользователь:** {message.author.mention}\n' \
+                                          f'**Ник:** `{pip["owner"]["username"]}`\n' \
                                           f'**Уровень:** `{pip["owner"]["level"]} [{int(pip["owner"]["levelPercentage"] * 100)}%]`\n' \
-                                          f'**Статус:** `{pip["owner"]["rank"]}`\n'
-                                    emb.description = dsc
-                                    await mes.channel.send(embed=emb)
+                                          f'**Статус:** `{pip["owner"]["rank"]}`'
+                        await message.channel.send(embed=emb)
+                        return
+            return
 
 
 class MyClient(Client):
@@ -200,14 +207,13 @@ class MyClient(Client):
                     await fight_random(roles["slp"], members, message)
 
         if message.channel == channel["login"]:
-            mes = message
             await message.delete()
-            if "/" in mes.content:
-                user_api = mes.content.split("/")[-1]
-                await user_token(mes, user_api)
+            if "/" in message.content:
+                userApi = message.content.split("/")[-1]
+                await userToken(message, userApi)
             else:
-                user_api = mes.content
-                await user_token(mes, user_api)
+                userApi = message.content
+                await userToken(message, userApi)
 
 
 client = MyClient()
