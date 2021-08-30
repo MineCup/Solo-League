@@ -154,8 +154,8 @@ async def userToken(message, api):
                     return
 
                 for name in nicknames["values"][0]:
-                    del nicknames
                     if pip["owner"]["username"].lower() == name.lower():
+                        del nicknames
                         await message.author.add_roles(roles["login"], reason="Проверенный")
 
                         d = datetime.utcnow().strftime("%d/%m/%y")
