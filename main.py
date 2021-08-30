@@ -139,19 +139,17 @@ async def userToken(message, api):
             if not pip["valid"]:
                 return
 
+            nicknames = services["bot"].spreadsheets().values().get(
+                spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
+                range=f'SOLO LEAGUE NICKNAMES!A1:A1000',
+                majorDimension='COLUMNS').execute()
+
+            if "values" not in nicknames:
+                return
+
             async for history in channel["login"].history(limit=500):
                 if pip["owner"]["username"] in history.embeds[0].description:
                     continue
-                nicknames = services["bot"].spreadsheets().values().get(
-                    spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
-                    range=f'SOLO LEAGUE NICKNAMES!A2:A1000',
-                    majorDimension='COLUMNS').execute()
-
-                if "values" not in nicknames:
-                    return
-
-                if pip["owner"]["username"].lower() not in str(nicknames["values"][0]).lower():
-                    return
 
                 for name in nicknames["values"][0]:
                     if pip["owner"]["username"].lower() == name.lower():
