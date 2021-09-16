@@ -193,6 +193,7 @@ class MyClient(Client):
         del before
         if roles["login"] not in after.roles:
             return
+        await sleep(3)
         async for history in channel["login"].history(limit=500):
             try:
                 if after.id in history.embeds[0].description:
