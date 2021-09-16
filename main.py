@@ -1,6 +1,7 @@
 from discord import Client, Intents, Embed
 from config import *
 from aiohttp import ClientSession
+from asyncio import sleep
 from datetime import datetime
 from random import randint
 from table import table
