@@ -149,7 +149,8 @@ async def userToken(message, api):
 
             async for history in channel["login"].history(limit=500):
                 if pip["owner"]["username"] in history.embeds[0].description:
-                    return
+                    dell = await message.channel.send(f'Никнейм {pip["owner"]["username"]} уже зарегистрирован.')
+                    await dell.delete(delay=10)
 
                 for name in nicknames["values"][0]:
                     if pip["owner"]["username"].lower() == name.lower():
@@ -167,6 +168,8 @@ async def userToken(message, api):
                                           f'**Статус:** `{pip["owner"]["rank"]}`'
                         await message.channel.send(embed=emb)
                         return
+                dell = await message.channel.send(f'Никнейма {pip["owner"]["username"]} нет в таблице.')
+                await dell.delete(delay=10)
             return
 
 
@@ -176,6 +179,19 @@ class MyClient(Client):
         intents.members = True
         intents.guilds = True
         super().__init__(intents=intents)
+
+    async def on_member_update(self, before, after):
+        del before
+        if roles["login"] not in after.roles:
+            return
+        async for history in channel["login"].history(limit=500):
+            try:
+                if after.id in history.embeds[0].description:
+                    return
+            except:
+                continue
+        await after.remove_roles(roles["login"], reason="Добавление роли не через канал выдача-роли")
+        print("Пидорас добавил роль соло лиги не через бота")
 
     async def on_ready(self):
         print("Discordo!")
