@@ -171,6 +171,7 @@ async def userToken(message, api):
                         return
                 dell = await message.channel.send(f'Никнейма {pip["owner"]["username"]} нет в таблице.')
                 await dell.delete(delay=10)
+                return
             return
 
 
