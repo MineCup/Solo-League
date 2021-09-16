@@ -135,10 +135,12 @@ async def userToken(message, api):
             pip = await response.json()
 
             if "Method not found" in pip:
-                return
+                dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
+                await dell.delete(delay=10)
 
             if not pip["valid"]:
-                return
+                dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
+                await dell.delete(delay=10)
 
             nicknames = services["bot"].spreadsheets().values().get(
                 spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
