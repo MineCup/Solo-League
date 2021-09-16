@@ -137,10 +137,13 @@ async def userToken(message, api):
             if "Method not found" in pip:
                 dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
                 await dell.delete(delay=10)
-
+                return
+            
+            
             if not pip["valid"]:
                 dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
                 await dell.delete(delay=10)
+                return
 
             nicknames = services["bot"].spreadsheets().values().get(
                 spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
@@ -155,6 +158,7 @@ async def userToken(message, api):
                     if pip["owner"]["username"] in history.embeds[0].description:
                         dell = await message.channel.send(f'Никнейм {pip["owner"]["username"]} уже зарегистрирован.')
                         await dell.delete(delay=10)
+                        return
                 except:
                     continue
                 for name in nicknames["values"][0]:
