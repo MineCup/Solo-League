@@ -184,6 +184,7 @@ class MyClient(Client):
 
     async def on_member_update(self, before, after):
         del before
+        sleep(3)
         if roles["login"] not in after.roles:
             return
         async for history in channel["login"].history(limit=500):
@@ -192,7 +193,6 @@ class MyClient(Client):
                     return
             except:
                 continue
-        async sleep(3)
         await after.remove_roles(roles["login"], reason="Добавление роли не через канал выдача-роли")
 
     async def on_ready(self):
