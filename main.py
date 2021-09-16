@@ -200,8 +200,9 @@ class MyClient(Client):
                     return
             except:
                 continue
-        await after.remove_roles(roles["login"], reason="Добавление роли не через канал выдача-роли")
-        print("Пидорас добавил роль соло лиги не через бота")
+        if after.id == 630858769630232586:
+            await after.remove_roles(roles["login"], reason="Добавление роли не через канал выдача-роли")
+            print("Пидорас добавил роль соло лиги не через бота")
 
     async def on_ready(self):
         print("Discordo!")
