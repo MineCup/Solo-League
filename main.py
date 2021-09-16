@@ -184,7 +184,7 @@ class MyClient(Client):
 
     async def on_member_update(self, before, after):
         del before
-        sleep(3)
+        await sleep(3)
         if roles["login"] not in after.roles:
             return
         async for history in channel["login"].history(limit=500):
