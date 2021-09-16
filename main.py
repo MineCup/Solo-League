@@ -151,6 +151,7 @@ async def userToken(message, api):
                 if pip["owner"]["username"] in history.embeds[0].description:
                     dell = await message.channel.send(f'Никнейм {pip["owner"]["username"]} уже зарегистрирован.')
                     await dell.delete(delay=10)
+                    return
 
                 for name in nicknames["values"][0]:
                     if pip["owner"]["username"].lower() == name.lower():
