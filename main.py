@@ -139,7 +139,6 @@ async def userToken(message, api):
                 await dell.delete(delay=10)
                 return
             
-            
             if not pip["valid"]:
                 dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
                 await dell.delete(delay=10)
@@ -179,6 +178,7 @@ async def userToken(message, api):
                         return
                 dell = await message.channel.send(f'Никнейма {pip["owner"]["username"]} нет в таблице.')
                 await dell.delete(delay=10)
+                return
             return
 
 
@@ -196,7 +196,7 @@ class MyClient(Client):
         await sleep(3)
         async for history in channel["login"].history(limit=500):
             try:
-                if after.id in history.embeds[0].description:
+                if str(after.id) in history.embeds[0].description:
                     return
             except:
                 continue
