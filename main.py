@@ -212,7 +212,7 @@ class MyClient(Client):
                 return
             for role in slwl:
                 if "Solo" in role.name:
-                    await event.user.remove_roles(role)
+                    await event.user.remove_roles(role, reason="Кик игрока.")
         
     async def on_ready(self):
         print("Discordo!")
