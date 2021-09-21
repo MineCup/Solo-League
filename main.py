@@ -187,6 +187,7 @@ class MyClient(Client):
         intents = Intents.default()
         intents.members = True
         intents.guilds = True
+        intents.voice_states = True
         super().__init__(intents=intents)
 
     async def on_member_update(self, before, after):
@@ -204,6 +205,15 @@ class MyClient(Client):
         await after.remove_roles(roles["login"], reason="Добавление роли не через канал выдача-роли")
         print("Пидорас добавил роль соло лиги не через бота")
 
+    async def on_voice_state_update(self, member, before, after):
+        del member, before, after
+        async for event in client.get_guild(guild_id).audit_logs(limit=100):
+            if event.action.name != "member_disconnect":
+                return
+            for role in slwl:
+                if "Solo" in role.name:
+                    await event.user.remove_roles(role)
+        
     async def on_ready(self):
         print("Discordo!")
         guild = client.get_guild(guild_id)
