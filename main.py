@@ -161,7 +161,7 @@ async def userToken(message, api):
                 except:
                     continue
                 for name in nicknames["values"][0]:
-                    if pip["owner"]["username"].lower() == name.lower():
+                    if pip["owner"]["username"].lower() == name.lower().strip():
                         del nicknames
                         await message.author.add_roles(roles["login"], reason="Проверенный")
 
