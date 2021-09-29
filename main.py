@@ -152,7 +152,7 @@ async def userToken(message, api):
             if "values" not in nicknames:
                 return
 
-            async for history in channel["login"].history(limit=500):
+            async for history in channel["login"].history(limit=2500):
                 try:
                     if pip["owner"]["username"] in history.embeds[0].description:
                         dell = await message.channel.send(f'Никнейм {pip["owner"]["username"]} уже зарегистрирован.')
