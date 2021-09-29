@@ -195,7 +195,7 @@ class MyClient(Client):
         if roles["login"] not in after.roles:
             return
         await sleep(3)
-        async for history in channel["login"].history(limit=500):
+        async for history in channel["login"].history(limit=2500):
             try:
                 if str(after.id) in history.embeds[0].description:
                     return
