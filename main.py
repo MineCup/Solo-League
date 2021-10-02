@@ -32,10 +32,10 @@ async def fight_random(slp, members, message):
     sostav = "\nНикнеймы участников:"
     async for history in channel["login"].history(limit=2500):
         for mem in members:
-            if str(mem.id) in history.embeds[0].description:
+            if str(mem.id) in history.embeds[0].description and str(mem.id) not in sostav:
                 nickname = history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "").replace(
                     "**", "")
-                sostav += f'\n<@{mem.id}>** {nickname}'
+                sostav += f'\n<@{mem.id}>** {nickname}**'
                 members_id.append(mem.id)
                 break
     print(members_id)
