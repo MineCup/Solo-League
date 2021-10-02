@@ -14,7 +14,7 @@ services = table()
 
 async def fight_test(slp, members, message):
     members_id = []
-    sostav = "\nНикнеймы участников:"
+    sostav = "\n**👤 Никнеймы участников:**"
     async for history in channel["login"].history(limit=2500):
         for mem in members:
             if str(mem.id) in history.embeds[0].description and str(mem.id) not in sostav:
@@ -29,7 +29,7 @@ async def fight_test(slp, members, message):
 
 async def fight_random(slp, members, message):
     members_id = []
-    sostav = "\nНикнеймы участников:"
+    sostav = "\n**👤 Никнеймы участников:**"
     async for history in channel["login"].history(limit=2500):
         for mem in members:
             if str(mem.id) in history.embeds[0].description and str(mem.id) not in sostav:
@@ -146,7 +146,7 @@ async def fight_random(slp, members, message):
                             description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                             🟥 Капитан: <@{cap1.id}>
                                             🟦 Капитан: <@{cap2.id}>
-                                            👑 Ведущий: <@{message.author.id}>**""",
+                                            👑 Ведущий: <@{message.author.id}>**{sostav}""",
                             color=3553599)
                 await message.channel.send(embed=emb)
 
