@@ -15,8 +15,8 @@ services = table()
 async def fight_random(slp, members, message):
     members_id = []
     sostav = "Никнеймы участников:"
-    for mem in members:
-        async for history in channel["login"].history(limit=2500):
+    async for history in channel["login"].history(limit=2500):
+        for mem in members:
             if str(mem.id) in history.embeds[0].description:
                 sostav += f"\n<@{mem.id}>" + history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "")
                 members_id.append(mem.id)
