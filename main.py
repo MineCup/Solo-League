@@ -231,8 +231,6 @@ class MyClient(Client):
         del member, before, after
         async for event in client.get_guild(guild_id).audit_logs(limit=100):
             try:
-                print(event)
-                print(event.action)
                 if event.action.name != "member_disconnect":
                     return
                 for role in slwl:
