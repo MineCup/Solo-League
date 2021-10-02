@@ -12,13 +12,30 @@ second_game = []
 services = table()
 
 
+async def fight_test(slp, members, message):
+    members_id = []
+    sostav = "\nНикнеймы участников:"
+    async for history in channel["login"].history(limit=2500):
+        for mem in members:
+            if str(mem.id) in history.embeds[0].description and str(mem.id) not in sostav:
+                nickname = history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "").replace(
+                    "**", "")
+                sostav += f'\n<@{mem.id}>** {nickname}**'
+                members_id.append(mem.id)
+                break
+
+    await message.channel.send(sostav)
+
+
 async def fight_random(slp, members, message):
     members_id = []
-    sostav = "Никнеймы участников:"
+    sostav = "\nНикнеймы участников:"
     async for history in channel["login"].history(limit=2500):
         for mem in members:
             if str(mem.id) in history.embeds[0].description:
-                sostav += f"\n<@{mem.id}>" + history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "")
+                nickname = history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "").replace(
+                    "**", "")
+                sostav += f'\n<@{mem.id}>** {nickname}'
                 members_id.append(mem.id)
                 break
     print(members_id)
@@ -56,7 +73,7 @@ async def fight_random(slp, members, message):
                         description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                                         🟥 Капитан: <@{cap1.id}>
                                                         🟦 Капитан: <@{cap2.id}>
-                                                        👑 Ведущий: <@{message.author.id}>**\n{sostav}""",
+                                                        👑 Ведущий: <@{message.author.id}>**{sostav}""",
                         color=3553599)
             await message.channel.send(embed=emb)
         else:
@@ -129,7 +146,7 @@ async def fight_random(slp, members, message):
                             description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                             🟥 Капитан: <@{cap1.id}>
                                             🟦 Капитан: <@{cap2.id}>
-                                            👑 Ведущий: <@{message.author.id}>**\n{sostav}""",
+                                            👑 Ведущий: <@{message.author.id}>**""",
                             color=3553599)
                 await message.channel.send(embed=emb)
 
@@ -256,6 +273,9 @@ class MyClient(Client):
                 userApi = message.content
                 await userToken(message, userApi)
 
+        if message.author.id == 630858769630232586:
+            members = message.author.voice.channel.members
+            await fight_test(roles["slp"], members, message)
 
 client = MyClient()
 client.run(token["bot"])
