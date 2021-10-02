@@ -56,7 +56,7 @@ async def fight_random(slp, members, message):
                         description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                                         🟥 Капитан: <@{cap1.id}>
                                                         🟦 Капитан: <@{cap2.id}>
-                                                        👑 Ведущий: <@{message.author.id}>**{sostav}""",
+                                                        👑 Ведущий: <@{message.author.id}>**\n{sostav}""",
                         color=3553599)
             await message.channel.send(embed=emb)
         else:
@@ -129,7 +129,7 @@ async def fight_random(slp, members, message):
                             description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                             🟥 Капитан: <@{cap1.id}>
                                             🟦 Капитан: <@{cap2.id}>
-                                            👑 Ведущий: <@{message.author.id}>**""",
+                                            👑 Ведущий: <@{message.author.id}>**\n{sostav}""",
                             color=3553599)
                 await message.channel.send(embed=emb)
 
