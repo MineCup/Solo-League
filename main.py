@@ -14,8 +14,13 @@ services = table()
 
 async def fight_random(slp, members, message):
     members_id = []
+    sostav = "Никнеймы участников:"
     for mem in members:
-        members_id.append(mem.id)
+        async for history in channel["login"].history(limit=2500):
+            if str(mem.id) in history.embeds[0].description:
+                sostav += f"\n<@{mem.id}>" + history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "")
+                members_id.append(mem.id)
+                break
     print(members_id)
     print(first_game)
     print(second_game)
@@ -51,7 +56,7 @@ async def fight_random(slp, members, message):
                         description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                                         🟥 Капитан: <@{cap1.id}>
                                                         🟦 Капитан: <@{cap2.id}>
-                                                        👑 Ведущий: <@{message.author.id}>**""",
+                                                        👑 Ведущий: <@{message.author.id}>**{sostav}""",
                         color=3553599)
             await message.channel.send(embed=emb)
         else:
@@ -138,7 +143,7 @@ async def userToken(message, api):
                 dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
                 await dell.delete(delay=10)
                 return
-            
+
             if not pip["valid"]:
                 dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
                 await dell.delete(delay=10)
@@ -201,7 +206,7 @@ class MyClient(Client):
                     return
             except:
                 continue
-                
+
         await after.remove_roles(roles["login"], reason="Добавление роли не через канал выдача-роли")
         print("Пидорас добавил роль соло лиги не через бота")
 
@@ -213,7 +218,7 @@ class MyClient(Client):
             for role in slwl:
                 if "Solo" in role.name:
                     await event.user.remove_roles(role, reason="Кик игрока.")
-        
+
     async def on_ready(self):
         print("Discordo!")
         guild = client.get_guild(guild_id)
@@ -228,18 +233,19 @@ class MyClient(Client):
         if message.author == self.user:
             return
 
-        if message.channel == channel["sl"] and message.content == "/fight":
-            all_roles = set(list(slwl) + message.author.roles)
-            if len(message.author.roles) + 3 != len(all_roles):
-                members = message.author.voice.channel.members
-                if len(members) == 9:
-                    for i in range(len(members)):
-                        if members[i] == message.author:
-                            members.pop(i)
-                            break
-                    await fight_random(roles["slp"], members, message)
-                elif len(members) == 8:
-                    await fight_random(roles["slp"], members, message)
+        if message.channel == channel["sl"]:
+            if message.content == "/fight":
+                all_roles = set(list(slwl) + message.author.roles)
+                if len(message.author.roles) + 3 != len(all_roles):
+                    members = message.author.voice.channel.members
+                    if len(members) == 9:
+                        for i in range(len(members)):
+                            if members[i] == message.author:
+                                members.pop(i)
+                                break
+                        await fight_random(roles["slp"], members, message)
+                    elif len(members) == 8:
+                        await fight_random(roles["slp"], members, message)
 
         if message.channel == channel["login"]:
             await message.delete()
