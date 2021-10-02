@@ -230,12 +230,17 @@ class MyClient(Client):
     async def on_voice_state_update(self, member, before, after):
         del member, before, after
         async for event in client.get_guild(guild_id).audit_logs(limit=100):
-            if event.action.name != "member_disconnect":
-                return
-            for role in slwl:
-                if "Solo" in role.name:
-                    await event.user.remove_roles(role, reason="Кик игрока.")
-
+            try:
+                print(event)
+                print(event.action)
+                if event.action.name != "member_disconnect":
+                    return
+                for role in slwl:
+                    if "Solo" in role.name:
+                        await event.user.remove_roles(role, reason="Кик игрока.")
+            except:
+                continue
+                
     async def on_ready(self):
         print("Discordo!")
         guild = client.get_guild(guild_id)
@@ -273,9 +278,10 @@ class MyClient(Client):
                 userApi = message.content
                 await userToken(message, userApi)
 
-        if message.author.id == 630858769630232586:
+        if message.author.id == 630858769630232586 and message.content == "/2fight":
             members = message.author.voice.channel.members
             await fight_test(roles["slp"], members, message)
+
 
 client = MyClient()
 client.run(token["bot"])
