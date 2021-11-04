@@ -5,9 +5,12 @@ from asyncio import sleep
 from datetime import datetime
 from random import randint
 from table import table
+from time import time
 
 first_game = []
 second_game = []
+
+timer = []
 
 services = table()
 
@@ -67,8 +70,16 @@ async def fight_random(slp, members, message):
                 cap2 = members[randint(0, len(members) - 1)]
                 while cap2 == cap1:
                     cap2 = members[randint(0, len(members) - 1)]
-            maps = await channel["map_pool"].fetch_message(messages["map_pool"])
-            maps = maps.content.split("\n")
+                    
+            maps = None
+            for check in timer:
+                if message.author.id in check:
+                    if time() - 500 < check[1]:
+                        maps = check[-1]
+                        break
+            if not maps:
+                maps = await channel["map_pool"].fetch_message(messages["map_pool"])
+                maps = maps.content.split("\n")
             emb = Embed(title="══₪ SOLO LEAGUE ₪══",
                         description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                                         🟥 Капитан: <@{cap1.id}>
@@ -140,14 +151,22 @@ async def fight_random(slp, members, message):
                     cap2 = members[randint(0, len(members) - 1)]
                     while cap2 == cap1:
                         cap2 = members[randint(0, len(members) - 1)]
-                maps = await channel["map_pool"].fetch_message(messages["map_pool"])
-                maps = maps.content.split("\n")
+                maps = None
+                for check in timer:
+                    if message.author.id in check:
+                        if time() - 500 < check[1]:
+                            maps = check[-1]
+                            break
+                if not maps:
+                    maps = await channel["map_pool"].fetch_message(messages["map_pool"])
+                    maps = maps.content.split("\n")
                 emb = Embed(title="══₪ SOLO LEAGUE ₪══",
                             description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
                                             🟥 Капитан: <@{cap1.id}>
                                             🟦 Капитан: <@{cap2.id}>
                                             👑 Ведущий: <@{message.author.id}>**{sostav}""",
                             color=3553599)
+                timer.append([message.author.id, time(), maps])
                 await message.channel.send(embed=emb)
 
 
