@@ -186,6 +186,7 @@ class MyClient(Client):
                         await fight_random(roles["slp"], members, message)
 
         if message.channel == channel["login"] and message.author.id != 630858769630232586:
+            start_time = time()
             await message.delete()
             if "/" in message.content:
                 userApi = message.content.split("/")[-1]
@@ -193,6 +194,7 @@ class MyClient(Client):
             else:
                 userApi = message.content
                 await userToken(message, userApi)
+            print(time() - start_time)
 
         if message.author.id == 630858769630232586 and message.content == "/2fight":
             members = message.author.voice.channel.members
