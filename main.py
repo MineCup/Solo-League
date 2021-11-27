@@ -185,7 +185,7 @@ class MyClient(Client):
                     elif len(members) == 8:
                         await fight_random(roles["slp"], members, message)
 
-        if message.channel == channel["login"] and message.author.id == 630858769630232586:
+        if message.channel == channel["login"] and message.author.id != 630858769630232586:
             start_time = time()
             await message.delete()
             if "/" in message.content:
