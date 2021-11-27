@@ -5,121 +5,105 @@ from asyncio import sleep
 from datetime import datetime
 from random import randint
 from table import table
-from time import time
-
-services = table()
 
 
-async def fight_test(slp, members, message):
-    members_id = []
+async def randomize(members, message, is_one_premium=None):
+    if is_one_premium:
+        cap1 = is_one_premium
+    else:
+        cap1 = members[randint(0, len(members) - 1)]
+    cap2 = members[randint(0, len(members) - 1)]
+    while cap2 == cap1:
+        cap2 = members[randint(0, len(members) - 1)]
+
+    maps = await channel["map_pool"].fetch_message(messages["map_pool"])
+    maps = maps.content.split("\n")
+
+    sostav = await fight(members)
+
+    emb = Embed(title="══₪ SOLO LEAGUE ₪══",
+                description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
+                                                        🟥 Капитан: <@{cap1.id}>
+                                                        🟦 Капитан: <@{cap2.id}>
+                                                        👑 Ведущий: <@{message.author.id}>**{sostav}""",
+                color=3553599)
+    await message.channel.send(embed=emb)
+
+
+async def fight(members):
+    total = 0
     sostav = "\n**👤 Никнеймы участников:**"
-    async for history in channel["login"].history(limit=2500):
-        for mem in members:
-            if str(mem.id) in history.embeds[0].description and str(mem.id) not in sostav:
-                nickname = history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "").replace(
-                    "**", "")
-                sostav += f'\n<@{mem.id}>** {nickname}**'
-                members_id.append(mem.id)
-                break
-
-    await message.channel.send(sostav)
+    async for history in channel["login"].history(limit=3500):
+        if not history.content:
+            for member in members:
+                if str(member.id) in history.embeds[0].description and str(member.id) not in sostav:
+                    nickname = history.embeds[0].description.split("\n")[1]
+                    nickname = nickname.replace("Ник:", "").replace("`", "").replace("**", "")
+                    sostav += f'\n<@{member.id}>** {nickname.strip()}**'
+                    total += 1
+                    break
+        if len(members) == total:
+            break
+    return sostav
 
 
 async def fight_random(slp, members, message):
-    members_id = []
-    sostav = "\n**👤 Никнеймы участников:**"
-    async for history in channel["login"].history(limit=2500):
-        for mem in members:
-            if str(mem.id) in history.embeds[0].description and str(mem.id) not in sostav:
-                nickname = history.embeds[0].description.split("\n")[1].replace("Ник:", "").replace("`", "").replace(
-                    "**", "")
-                sostav += f'\n<@{mem.id}>** {nickname}**'
-                members_id.append(mem.id)
-                break
-    else:
-        premium = []
-        for i in range(len(members)):
-            if slp in members[i].roles:
-                premium.append(i)
-        if premium:
-            if len(premium) == 1:
-                cap1 = members[premium[0]]
-                cap2 = members[randint(0, len(members) - 1)]
-                while cap2 == cap1:
-                    cap2 = members[premium[randint(0, len(premium) - 1)]]
-            else:
-                cap1 = members[premium[randint(0, len(premium) - 1)]]
-                cap2 = members[premium[randint(0, len(premium) - 1)]]
-                while cap2 == cap1:
-                    cap2 = members[premium[randint(0, len(premium) - 1)]]
+    premium = []
+    for i in range(len(members)):
+        if slp in members[i].roles:
+            premium.append(i)
+    if premium:
+        if len(premium) == 1:
+            await randomize(members, message, premium[0])
         else:
-            cap1 = members[randint(0, len(members) - 1)]
-            cap2 = members[randint(0, len(members) - 1)]
-            while cap2 == cap1:
-                cap2 = members[randint(0, len(members) - 1)]
-
-        maps = await channel["map_pool"].fetch_message(messages["map_pool"])
-        maps = maps.content.split("\n")
-        emb = Embed(title="══₪ SOLO LEAGUE ₪══",
-                    description=f"""**⚔ Карта: {maps[randint(0, len(maps) - 1)]}
-                                                    🟥 Капитан: <@{cap1.id}>
-                                                    🟦 Капитан: <@{cap2.id}>
-                                                    👑 Ведущий: <@{message.author.id}>**{sostav}""",
-                    color=3553599)
-        await message.channel.send(embed=emb)
+            await randomize(premium, message)
+    else:
+        await randomize(members, message)
 
 
-async def userToken(message, api):
+async def token_info(api):
     async with ClientSession() as session:
         async with session.get(f"https://api.vimeworld.ru/misc/token/{api}") as response:
-            pip = await response.json()
+            return await response.json()
 
-            if "Method not found" in pip:
-                dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
-                await dell.delete(delay=10)
-                return
 
-            if not pip["valid"]:
-                dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
-                await dell.delete(delay=10)
-                return
+async def user_check(user_info, message):
+    nicknames = table()["bot"].spreadsheets().values().get(
+        spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
+        range=f'SOLO LEAGUE NICKNAMES!A1:A2000',
+        majorDimension='COLUMNS').execute()
 
-            nicknames = services["bot"].spreadsheets().values().get(
-                spreadsheetId="1OaMpmMMFR_NIzmqtEh12XJ6N4X9R723S4g709FKvj_8",
-                range=f'SOLO LEAGUE NICKNAMES!A1:A1000',
-                majorDimension='COLUMNS').execute()
+    if "values" not in nicknames:
+        dell = await message.channel.send(f'Таблица с никнеймами пуста. Обратитесь к <@630858769630232586>')
+        await dell.delete(delay=10)
+        return
 
-            if "values" not in nicknames:
-                return
+    if user_info["owner"]["username"].lower() in nicknames["values"][0]:
+        dell = await message.channel.send(f'Никнейма {user_info["owner"]["username"]} нет в таблице.')
+        del nicknames
+        await dell.delete(delay=10)
+        return
 
-            async for history in channel["login"].history(limit=3500):
-                try:
-                    if pip["owner"]["username"] in history.embeds[0].description:
-                        dell = await message.channel.send(f'Никнейм {pip["owner"]["username"]} уже зарегистрирован.')
-                        await dell.delete(delay=10)
-                        return
-                except:
-                    continue
-                for name in nicknames["values"][0]:
-                    if pip["owner"]["username"].lower() == name.lower().strip():
-                        del nicknames
-                        await message.author.add_roles(roles["login"], reason="Проверенный")
+    if True in [True if not history.content and f'`{user_info["owner"]["username"]}`' in history.embeds[0].description
+                else False
+                for history in await message.channel.history(limit=3500).flatten()]:
+        dell = await message.channel.send(f'Никнейм {user_info["owner"]["username"]} уже зарегистрирован.')
+        await dell.delete(delay=10)
+        return
 
-                        d = datetime.utcnow().strftime("%d/%m/%y")
-                        emb = Embed(title="**Принят токен!**", colour=0x19253A)
-                        emb.set_footer(text=d)
-                        emb.set_thumbnail(url=f"https://skin.vimeworld.ru/helm/3d/{pip['owner']['username']}.png")
+    d = datetime.utcnow().strftime("%d/%m/%y")
+    emb = Embed(title="**Принят токен!**", colour=0x19253A)
+    emb.set_footer(text=d)
+    emb.set_thumbnail(url=f"https://skin.vimeworld.ru/helm/3d/{user_info['owner']['username']}.png")
 
-                        emb.description = f'**Пользователь:** {message.author.mention}\n' \
-                                          f'**Ник:** `{pip["owner"]["username"]}`\n' \
-                                          f'**Уровень:** `{pip["owner"]["level"]} [{int(pip["owner"]["levelPercentage"] * 100)}%]`\n' \
-                                          f'**Статус:** `{pip["owner"]["rank"]}`'
-                        await message.channel.send(embed=emb)
-                        return
-                dell = await message.channel.send(f'Никнейма {pip["owner"]["username"]} нет в таблице.')
-                await dell.delete(delay=10)
-                return
-            return
+    emb.description = f'''**Пользователь:** {message.author.mention}
+    **Ник:** `{user_info["owner"]["username"]}`
+    **Уровень:** `{user_info["owner"]["level"]} [{int(user_info["owner"]["levelPercentage"] * 100)}%]`
+    **Статус:** `{user_info["owner"]["rank"]}`'''
+    await message.channel.send(embed=emb)
+
+    await message.author.add_roles(roles["login"], reason="Проверенный")
+    return
 
 
 class MyClient(Client):
@@ -171,7 +155,22 @@ class MyClient(Client):
         if message.author == self.user or message.author.bot:
             return
 
-        if message.channel == channel["sl"]:
+        if message.guild:
+            if message.channel == channel["login"]:
+                await message.delete()
+                answer = await token_info(message.content.split("/")[-1])
+                if answer.get("error") is None and answer.get("valid"):
+                    await user_check(answer, message)
+                else:
+                    dell = await message.channel.send(f'<@{message.author.id}> Некорректный токен')
+                    await dell.delete(delay=10)
+                    return
+
+            if message.author.id == 630858769630232586 and message.content == "/testfight":
+                members = message.author.voice.channel.members
+                sostav = await fight(members)
+                await message.channel.send(sostav)
+
             if message.content == "/fight":
                 all_roles = set(list(slwl) + message.author.roles)
                 if len(message.author.roles) + 3 != len(all_roles):
@@ -184,21 +183,9 @@ class MyClient(Client):
                         await fight_random(roles["slp"], members, message)
                     elif len(members) == 8:
                         await fight_random(roles["slp"], members, message)
-
-        if message.channel == channel["login"] and message.author.id != 630858769630232586:
-            start_time = time()
-            await message.delete()
-            if "/" in message.content:
-                userApi = message.content.split("/")[-1]
-                await userToken(message, userApi)
-            else:
-                userApi = message.content
-                await userToken(message, userApi)
-            print(time() - start_time)
-
-        if message.author.id == 630858769630232586 and message.content == "/2fight":
-            members = message.author.voice.channel.members
-            await fight_test(roles["slp"], members, message)
+                    else:
+                        await message.channel.send(f"В вашем канале {len(members)} участников.\n"
+                                                   f"/fight доступен при 8 и 9 участниках.")
 
 
 client = MyClient()
