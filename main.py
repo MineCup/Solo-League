@@ -168,7 +168,7 @@ class MyClient(Client):
             slwl[role[0]] = guild.get_role(role[1])
 
     async def on_message(self, message):
-        if message.author == self.user:
+        if message.author == self.user or message.author.bot:
             return
 
         if message.channel == channel["sl"]:
