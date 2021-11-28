@@ -78,11 +78,12 @@ async def user_check(user_info, message):
         await dell.delete(delay=10)
         return
 
-    if user_info["owner"]["username"].lower() in nicknames["values"][0]:
+    if user_info["owner"]["username"].lower() in str(nicknames["values"][0]).lower():
         dell = await message.channel.send(f'Никнейма {user_info["owner"]["username"]} нет в таблице.')
         del nicknames
         await dell.delete(delay=10)
         return
+    del nicknames
 
     if True in [True if not history.content and f'`{user_info["owner"]["username"]}`' in history.embeds[0].description
                 else False
